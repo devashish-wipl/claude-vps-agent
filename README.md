@@ -15,14 +15,35 @@ installed*, which were *already present*, and which *failed and why*.
 
 ## Quick demo (after setup)
 
-The cleanest one-liner to show the agent working end-to-end:
+Assumes you've completed the [Setup](#setup) section once — repo cloned,
+Docker Desktop running, `.env` and `inventory/hosts.yml` filled in, and
+`docker compose build` already executed.
+
+### Step 1 — Open a terminal in the project folder
+
+**Windows (PowerShell):**
+```powershell
+cd "C:\Users\<you>\Desktop\claude-vps-agent"
+```
+
+**Linux / macOS:**
+```bash
+cd ~/Desktop/claude-vps-agent
+```
+
+### Step 2 — Pull latest (if you've pushed commits from elsewhere)
+
+```bash
+git pull
+```
+
+### Step 3 — Run the agent
 
 ```bash
 docker compose run --rm agent my-linux-vps "install htop, tree, ncdu, cowsay, and figlet"
 ```
 
-Expected output (assuming a baseline VPS where only `htop` happens to be
-pre-installed):
+Expected output (baseline VPS where only `htop` is pre-installed):
 
 ```
 Newly installed: tree, ncdu, cowsay, figlet
@@ -30,14 +51,32 @@ Already present: htop
 Failed:          none
 ```
 
-This single run demonstrates everything that matters:
-- **Newly installed** bucket — 4 packages the agent installed fresh
-- **Already present** bucket — proves the per-package idempotency check works
-- **Failed** bucket — shows the agent reports failures honestly (none here)
+### Step 4 — Re-run the exact same command (the idempotency punchline)
 
-Re-run the **exact same command** immediately and you'll see all five
-packages move to "Already present" — the killer feature for safe
-fleet ops.
+```bash
+docker compose run --rm agent my-linux-vps "install htop, tree, ncdu, cowsay, and figlet"
+```
+
+Now the output shifts:
+
+```
+Newly installed: none
+Already present: htop, tree, ncdu, cowsay, figlet
+Failed:          none
+```
+
+Same command, different report — because the agent knows everything is
+already in the desired state. **This is the killer feature for safe fleet
+ops:** you can re-run blindly across hundreds of VPSes without breaking
+anything.
+
+### What you've just demonstrated
+
+- **Step 3 → Newly installed bucket** — the agent installed 4 fresh packages
+- **Step 3 → Already present bucket** — proved per-package idempotency
+- **Step 4** — proved full-run idempotency: zero changes on a redundant request
+- **Failed bucket** — empty in both runs, but if it weren't, you'd see the
+  per-package reason and the agent would attempt a single adapt-and-retry
 
 ---
 

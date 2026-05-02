@@ -87,14 +87,59 @@ docker compose run --rm agent my-linux-vps "install Python 3.12 with pip and ven
 
 ### Demo command (for showing the agent to others)
 
+Two-step demo that exercises every meaningful capability of the agent.
+
+**Step 1 — open a terminal in the project folder:**
+
+```powershell
+cd "C:\Users\<you>\Desktop\claude-vps-agent"        # Windows
+# or
+cd ~/Desktop/claude-vps-agent                        # Linux / macOS
+```
+
+**Step 2 — pull latest (if needed):**
+
+```bash
+git pull
+```
+
+**Step 3 — first run (mixed buckets):**
+
 ```bash
 docker compose run --rm agent my-linux-vps "install htop, tree, ncdu, cowsay, and figlet"
 ```
 
+Expected:
+```
+Newly installed: tree, ncdu, cowsay, figlet
+Already present: htop
+Failed:          none
+```
+
+**Step 4 — second run with the SAME command (idempotency punchline):**
+
+```bash
+docker compose run --rm agent my-linux-vps "install htop, tree, ncdu, cowsay, and figlet"
+```
+
+Expected:
+```
+Newly installed: none
+Already present: htop, tree, ncdu, cowsay, figlet
+Failed:          none
+```
+
 Picked because most baseline Ubuntu VPSes have `htop` already and the rest
-missing — so a single run shows both "Newly installed" and "Already
-present" buckets populated. Re-run immediately and watch all five move to
-"Already present" — the cleanest live demonstration of idempotency.
+missing — so Step 3 shows both buckets populated and Step 4 proves the
+idempotency check works at every level.
+
+**To reset for the next demo run** (purge everything except `htop`):
+
+```bash
+ssh <vps-user>@<vps-host>
+sudo apt-get purge -y tree ncdu cowsay figlet
+exit
+```
 
 The `(dry-run)` keyword in the prompt triggers `--check` mode: Ansible
 reports what *would* change without changing anything.
