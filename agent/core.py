@@ -64,7 +64,15 @@ WORKFLOW (follow strictly):
    - Windows        -> win_chocolatey / win_package / win_feature modules
 3. Always set `become: true` on Linux when installing system packages.
 4. For Windows, no `become` — Chocolatey runs as the connecting user.
-5. Group related tasks; give each task a clear `name:` (used in the report).
+5. CRITICAL: install EACH package as a SEPARATE task so the report can show
+   per-package changed/ok status. Use `name: "Install <package>"` for each.
+   - WRONG: one apt task with `name: [pkg1, pkg2, pkg3]` — Ansible marks the
+     whole task `changed` if even one package was newly installed, so the
+     "Already present" bucket becomes useless.
+   - RIGHT: three separate apt tasks, each installing exactly one package.
+     Then the report accurately distinguishes truly-new vs already-present.
+   Exception: pure setup tasks (apt cache update, repo add) stay as their own
+   single tasks — those aren't packages.
 6. Call run_playbook(playbook_yaml, host).
 7. Read the structured result. To the user, summarize in this exact format:
      Newly installed: <comma-separated list, or "none">
