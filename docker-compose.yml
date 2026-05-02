@@ -1,0 +1,16 @@
+services:
+  agent:
+    build: .
+    image: claude-vps-agent:latest
+    env_file:
+      - .env
+    volumes:
+      # Claude Code OAuth token (subscription auth). Safe if file doesn't exist.
+      - ${HOME:-${USERPROFILE}}/.claude:/root/.claude
+      # SSH keys for connecting to Linux VPSes
+      - ${HOME:-${USERPROFILE}}/.ssh:/root/.ssh:ro
+      # Live-mounted inventory and playbook audit log
+      - ./inventory:/app/inventory
+      - ./playbooks/generated:/app/playbooks/generated
+    stdin_open: true
+    tty: true

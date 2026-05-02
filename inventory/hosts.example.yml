@@ -1,0 +1,32 @@
+# Copy this file to hosts.yml and edit with your real VPS details.
+# `hosts.yml` is git-ignored.
+all:
+  hosts:
+
+    # ─── Linux VPS over SSH ──────────────────────────────────────────
+    my-linux-vps:
+      ansible_host: 1.2.3.4
+      ansible_user: root
+      ansible_ssh_private_key_file: ~/.ssh/id_rsa
+      # ansible_become_password: "{{ lookup('env', 'SUDO_PASSWORD') }}"  # if non-root user
+
+    # ─── Windows VPS over WinRM ─────────────────────────────────────
+    # Pre-req on the VPS (run once as Administrator):
+    #   winrm quickconfig -q
+    #   winrm set winrm/config/service/auth '@{Basic="true"}'    # or use NTLM/Kerberos
+    #   winrm set winrm/config/service '@{AllowUnencrypted="true"}'   # only for testing!
+    my-windows-vps:
+      ansible_host: 5.6.7.8
+      ansible_user: Administrator
+      ansible_password: "{{ lookup('env', 'WIN_PASSWORD') }}"
+      ansible_connection: winrm
+      ansible_port: 5986
+      ansible_winrm_transport: ntlm
+      ansible_winrm_server_cert_validation: ignore
+
+    # ─── Windows VPS over OpenSSH (Server 2019+, simpler) ───────────
+    # my-windows-ssh:
+    #   ansible_host: 9.10.11.12
+    #   ansible_user: Administrator
+    #   ansible_ssh_private_key_file: ~/.ssh/id_rsa
+    #   ansible_shell_type: powershell

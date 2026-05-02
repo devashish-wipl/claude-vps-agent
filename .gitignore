@@ -1,0 +1,20 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# generated playbooks are local audit logs, not source
+playbooks/generated/*.yml
+!playbooks/generated/.gitkeep
+
+# real inventory has secrets / IPs
+inventory/hosts.yml
+
+# editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
