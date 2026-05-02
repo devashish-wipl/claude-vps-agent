@@ -12,5 +12,8 @@ services:
       # Live-mounted inventory and playbook audit log
       - ./inventory:/app/inventory
       - ./playbooks/generated:/app/playbooks/generated
+      # Live-mount source so `agent/` and main.py edits take effect without rebuild
+      - ./agent:/app/agent
+      - ./main.py:/app/main.py
     stdin_open: true
     tty: true

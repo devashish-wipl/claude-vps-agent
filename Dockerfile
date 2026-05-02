@@ -18,6 +18,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Claude Code CLI — used by the Agent SDK for subscription auth (`claude login`)
 RUN npm install -g @anthropic-ai/claude-code
 
+# Pre-create empty Claude config so the CLI doesn't print "config not found"
+# warnings on every run when we're using API-key auth instead of subscription.
+RUN echo '{}' > /root/.claude.json
+
 WORKDIR /app
 
 COPY requirements.txt .
