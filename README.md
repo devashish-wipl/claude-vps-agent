@@ -13,6 +13,34 @@ installed*, which were *already present*, and which *failed and why*.
 
 ---
 
+## Quick demo (after setup)
+
+The cleanest one-liner to show the agent working end-to-end:
+
+```bash
+docker compose run --rm agent my-linux-vps "install htop, tree, ncdu, cowsay, and figlet"
+```
+
+Expected output (assuming a baseline VPS where only `htop` happens to be
+pre-installed):
+
+```
+Newly installed: tree, ncdu, cowsay, figlet
+Already present: htop
+Failed:          none
+```
+
+This single run demonstrates everything that matters:
+- **Newly installed** bucket — 4 packages the agent installed fresh
+- **Already present** bucket — proves the per-package idempotency check works
+- **Failed** bucket — shows the agent reports failures honestly (none here)
+
+Re-run the **exact same command** immediately and you'll see all five
+packages move to "Already present" — the killer feature for safe
+fleet ops.
+
+---
+
 ## How it works
 
 ```

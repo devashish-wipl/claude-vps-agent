@@ -85,6 +85,17 @@ docker compose run --rm agent my-linux-vps "install Node.js 20 LTS from NodeSour
 docker compose run --rm agent my-linux-vps "install Python 3.12 with pip and venv (dry-run)"
 ```
 
+### Demo command (for showing the agent to others)
+
+```bash
+docker compose run --rm agent my-linux-vps "install htop, tree, ncdu, cowsay, and figlet"
+```
+
+Picked because most baseline Ubuntu VPSes have `htop` already and the rest
+missing — so a single run shows both "Newly installed" and "Already
+present" buckets populated. Re-run immediately and watch all five move to
+"Already present" — the cleanest live demonstration of idempotency.
+
 The `(dry-run)` keyword in the prompt triggers `--check` mode: Ansible
 reports what *would* change without changing anything.
 
